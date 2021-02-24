@@ -5,7 +5,9 @@
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  background-color: gray;
+  background: url("./img/background.jpg") no-repeat;
+  background-size: cover;
+  background-position: 100% 100%;
 }
 
 .game-board {
@@ -56,9 +58,29 @@
   align-items: center;
 }
 
+.title {
+  background: url("./img/text-background.jpg") no-repeat center center;
+  background-size: cover;
+  color: #fff;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -moz-background-clip:text;
+  background-clip:text; 
+  font-family:Catamaran,sans-serif;
+  font-size:3rem;
+  padding: 0;
+  margin: 0.5rem 0;
+  text-align:center;
+  text-shadow: 5px 5px 10px black;
+  -webkit-text-stroke: 0.5px #ffaa00;
+  
+}
+
 .control p {
-  font-weight: bold;
   padding-right: 1rem;
+  font-weight: bold;
+  text-shadow: 5px 5px 10px black;
+  color: white;
 }
 
 #difficulty {
@@ -66,6 +88,7 @@
 }
 
 .control button {
+  padding: 0.5rem;
   font-weight: bold;
   color: white;
   background-color: red;

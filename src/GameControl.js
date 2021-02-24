@@ -9,6 +9,8 @@ function GameControl(props) {
     }
 
     return (
+        <>
+        <h1 className="title">REACT SNAKE</h1>
         <div className="control">
             <p>Dificultad:</p>
             <select name="difficulty" id="difficulty">
@@ -18,6 +20,7 @@ function GameControl(props) {
             </select>
             <button onClick={e => startGame(e)}>START</button>
         </div>
+        </>
     );
 }
 
