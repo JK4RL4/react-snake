@@ -6,46 +6,69 @@ function SnakeHead(props) {
     let snakeNewMove = props.snakeMove.slice();
     let [dir, setDir] = useState("right");
     let refDir = useRef("right");
-    let snakeHeadMovement;
+    let moveFlag = useRef(true);
     let styler = {
         top: snakeHeadTop,
         left: snakeHeadLeft
     }
 
-    document.addEventListener("keydown", function (e) {
+    function useEventListener(eventName, handler, element = window) {
+        let savedHandler = useRef();
+
+        useEffect(() => {
+            savedHandler.current = handler;
+        }, [handler]);
+
+        useEffect(() => {
+            let isSupported = element && element.addEventListener;
+            if (!isSupported) return;
+
+            let eventListener = event => savedHandler.current(event);
+
+            element.addEventListener(eventName, eventListener);
+
+            return () => {
+                document.removeEventListener(eventName, eventListener);
+            };
+        }, [eventName, element]);
+    };
+
+    const updateDir = (e) => {
         let newDir;
 
-        switch (e.key) {
-            case "ArrowUp":
-                newDir = setNewDir("up");
-                break;
-            case "ArrowDown":
-                newDir = setNewDir("down");
-                break;
-            case "ArrowRight":
-                newDir = setNewDir("right");
-                break;
-            case "ArrowLeft":
-                newDir = setNewDir("left");
-                break;
-            default:
-                newDir = dir;
-                break;
+        if (moveFlag.current) {
+            moveFlag.current = false;
+            switch (e.key) {
+                case "ArrowUp":
+                    newDir = setNewDir("up");
+                    break;
+                case "ArrowDown":
+                    newDir = setNewDir("down");
+                    break;
+                case "ArrowRight":
+                    newDir = setNewDir("right");
+                    break;
+                case "ArrowLeft":
+                    newDir = setNewDir("left");
+                    break;
+                default:
+                    newDir = refDir.current;
+                    break;
+            }
+
+            if (newDir !== refDir.current) {
+                setDir(newDir);
+                refDir.current = newDir;
+            }
         }
-        if (newDir !== dir) {
-            setDir(newDir);
-            refDir.current = newDir;
-        }
-    });
+    }
 
     const setNewDir = (newDir) => {
-        let actualDir = refDir.current;
-
-        if ((actualDir === "up" && newDir === "down") ||
-            (actualDir === "down" && newDir === "up") ||
-            (actualDir === "right" && newDir === "left") ||
-            (actualDir === "left" && newDir === "right")) {
-            return actualDir;
+        if ((refDir.current === "up" && newDir === "down") ||
+            (refDir.current === "down" && newDir === "up") ||
+            (refDir.current === "right" && newDir === "left") ||
+            (refDir.current === "left" && newDir === "right")) {
+            return refDir.current;
         } else {
             return newDir;
         }
@@ -92,8 +115,7 @@ function SnakeHead(props) {
             snake.top < 0 ||
             snake.top + snake.width > props.getOffsetHeight() - 10 ||
             snake.left + snake.height > props.getOffsetWidth() - 10) {
-            alert("Has perdido");
-            window.location.reload();
+                props.finishGame();
         }
     }
 
@@ -123,17 +145,21 @@ function SnakeHead(props) {
             let dotLeft = dot.offsetLeft;
 
             if (snake.top === dotTop && snake.left === dotLeft) {
-                alert("Has perdido");
-                window.location.reload();
+                props.finishGame();
             }
         })
     }
 
     useEffect(() => {
-        snakeHeadMovement = setTimeout(function () { move("#snake-head", dir) }, 1000 / props.vel);
-        props.setSnakeTail(props.moveSnakeTail());
-        checkSnakeCollision();
+        if (!props.gameFinished) {
+            setTimeout(function () { move("#snake-head", dir) }, 1000 / props.vel);
+            props.setSnakeTail(props.moveSnakeTail());
+            checkSnakeCollision();
+            moveFlag.current = true;
+        }
     }, [snakeHeadTop, snakeHeadLeft]);
+
+    useEventListener("keydown", updateDir);
 
     return (
         <div id="snake-head" className="snake-dot" style={styler} />
