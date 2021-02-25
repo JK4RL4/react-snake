@@ -20,6 +20,7 @@ function GameControl(props) {
             </select>
             <button onClick={e => startGame(e)}>START</button>
         </div>
+        <p className="keys">(Cursores o wasd para cambiar la dirección)</p>
         </>
     );
 }
