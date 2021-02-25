@@ -170,7 +170,6 @@ function SnakeHead(props) {
         if (!props.gameFinished) {
             setTimeout(function () { move("#snake-head", dir) }, 1000 / props.vel);
             props.setSnakeTail(props.moveSnakeTail());
-            checkSnakeCollision();
             moveFlag.current = true;
         }
     }, [snakeHeadTop, snakeHeadLeft]);
