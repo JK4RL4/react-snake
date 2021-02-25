@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import SnakeHead from './SnakeHead';
 import SnakeTail from './SnakeTail';
 import Food from './Food';
@@ -6,8 +6,8 @@ import Food from './Food';
 function BoardGame(props) {
     let [newFood, setNewFood] = useState(false);
     let [snakeTail, setSnakeTail] = useState("");
-    let [snakeMove, setSnakeMove] = useState([]);
     let [snakeLength, setSnakeLength] = useState(0);
+    let snakeMove = useRef([]);
     let [gameFinished, setGameFinished] = useState(false);
 
     const getOffsetWidth = () => {
@@ -30,8 +30,8 @@ function BoardGame(props) {
         let tail = [];
         for (let i = 0; i < snakeLength; i++) {
             tail[i] = {
-                top: snakeMove[i].top,
-                left: snakeMove[i].left
+                top: snakeMove.current[i].top,
+                left: snakeMove.current[i].left
             }
         }
 
@@ -40,7 +40,15 @@ function BoardGame(props) {
                 <SnakeTail key={key} position={position} />
             );
         })
+
+        cleanSnakeMove();
+
         return tail;
+    }
+
+    const cleanSnakeMove = () => {
+        let arrayAux = snakeMove.current.slice(0, snakeLength);
+        snakeMove.current = arrayAux;
     }
 
     const finishGame = () => {
@@ -52,7 +60,7 @@ function BoardGame(props) {
         {props.start &&
             <>
             <SnakeHead getOffsetHeight={getOffsetHeight} getOffsetWidth={getOffsetWidth} eatFood={eatFood} vel={props.vel} snakeMove={snakeMove} snakeLength={snakeLength}
-                       setSnakeMove={setSnakeMove} moveSnakeTail={moveSnakeTail} setSnakeTail={setSnakeTail} finishGame={finishGame} gameFinished={gameFinished}/>
+                       moveSnakeTail={moveSnakeTail} setSnakeTail={setSnakeTail} finishGame={finishGame} gameFinished={gameFinished}/>
             <Food getOffsetHeight={getOffsetHeight} getOffsetWidth={getOffsetWidth} newFood={newFood} />
             {snakeTail}
             </>

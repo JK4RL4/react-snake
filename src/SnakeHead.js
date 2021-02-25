@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 function SnakeHead(props) {
     let [snakeHeadTop, setSnakeHeadTop] = useState(0);
     let [snakeHeadLeft, setSnakeHeadLeft] = useState(0);
-    let snakeNewMove = props.snakeMove.slice();
+    let snakeNewMove = props.snakeMove.current.slice();
     let [dir, setDir] = useState("right");
     let refDir = useRef("right");
     let moveFlag = useRef(true);
@@ -42,13 +42,25 @@ function SnakeHead(props) {
                 case "ArrowUp":
                     newDir = setNewDir("up");
                     break;
+                case "w":
+                    newDir = setNewDir("up");
+                    break;
                 case "ArrowDown":
+                    newDir = setNewDir("down");
+                    break;
+                case "s":
                     newDir = setNewDir("down");
                     break;
                 case "ArrowRight":
                     newDir = setNewDir("right");
                     break;
+                case "d":
+                    newDir = setNewDir("right");
+                    break;
                 case "ArrowLeft":
+                    newDir = setNewDir("left");
+                    break;
+                case "a":
                     newDir = setNewDir("left");
                     break;
                 default:
@@ -67,7 +79,11 @@ function SnakeHead(props) {
         if ((refDir.current === "up" && newDir === "down") ||
             (refDir.current === "down" && newDir === "up") ||
             (refDir.current === "right" && newDir === "left") ||
-            (refDir.current === "left" && newDir === "right")) {
+            (refDir.current === "left" && newDir === "right") ||
+            (refDir.current === "w" && newDir === "s") ||
+            (refDir.current === "s" && newDir === "w") ||
+            (refDir.current === "d" && newDir === "a") ||
+            (refDir.current === "a" && newDir === "d")) {
             return refDir.current;
         } else {
             return newDir;
@@ -86,7 +102,7 @@ function SnakeHead(props) {
         }
 
         snakeNewMove.unshift({ top: snake.top, left: snake.left });
-        props.setSnakeMove(snakeNewMove);
+        props.snakeMove.current = snakeNewMove;
 
         switch (dir) {
             case "up":
